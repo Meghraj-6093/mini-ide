@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 import { useIDEStore } from '@/store/ideStore';
 
 export default function Tree() {
-  const { projects, currentProjectId } = useIDEStore();
+  const { projects, currentProjectId, createTab, setActiveFile, setActiveTab } = useIDEStore();
   const [expanded, setExpanded] = useState<Set<string>>(new Set(['root']));
 
   const project = projects.find((p) => p.id === currentProjectId);
@@ -21,12 +21,10 @@ export default function Tree() {
     });
   };
 
-  const handleClick = (id: string) => {
-    const file = files.find((f) => f.id === id);
-    if (file?.type === 'folder') {
+  const handleClick = (id: string, file: typeof files[0]) => {
+    if (file.type === 'folder') {
       toggleExpand(id);
-    } else if (file?.type === 'file') {
-      const { createTab, setActiveFile, setActiveTab } = useIDEStore.getState();
+    } else if (file.type === 'file') {
       createTab(currentProjectId, id);
       setActiveFile(id);
       setActiveTab(`tab-${Date.now()}`);
@@ -38,7 +36,7 @@ export default function Tree() {
       {files.map((file) => (
         <div
           key={file.id}
-          onClick={() => handleClick(file.id)}
+          onClick={() => handleClick(file.id, file)}
           className={cn(
             'flex items-center gap-2 px-2 py-1 rounded cursor-pointer',
             'hover:bg-gray-100 dark:hover:bg-gray-800'
