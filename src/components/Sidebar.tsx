@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils';
 import { useIDEStore } from '@/store/ideStore';
 import Tree from './Tree';
+import Templates from './Templates';
 
 export default function Sidebar() {
   const { sidebarOpen, toggleSidebar } = useIDEStore();
