@@ -1,35 +1,20 @@
-import React from 'react'
-import Editor from '@monaco-editor/react'
+import { useIDEStore } from '@/store/ideStore';
 
-interface MonacoEditorProps {
-  value: string
-  language: string
-  onChange: (value: string) => void
-  readOnly?: boolean
-}
+export default function MonacoEditor() {
+  const { selectedFileId } = useIDEStore();
 
-export const MonacoEditor: React.FC<MonacoEditorProps> = ({
-  value,
-  language,
-  onChange,
-  readOnly = false,
-}) => {
   return (
-    <Editor
-      height="100%"
-      language={language}
-      value={value}
-      onChange={(val) => val !== undefined && onChange(val)}
-      theme="vs-dark"
-      options={{
-        minimap: { enabled: false },
-        fontSize: 14,
-        lineNumbers: 'on',
-        wordWrap: 'on',
-        scrollBeyondLastLine: false,
-        readOnly,
-        automaticLayout: true,
-      }}
-    />
-  )
+    <div className="flex-1 p-2 bg-white dark:bg-gray-900">
+      <div className="font-mono text-sm">
+        {selectedFileId ? (
+          <textarea
+            className="w-full h-full bg-transparent resize-none"
+            placeholder="Edit your code here..."
+          />
+        ) : (
+          <div className="text-gray-500 dark:text-gray-400">Select a file to edit</div>
+        )}
+      </div>
+    </div>
+  );
 }
