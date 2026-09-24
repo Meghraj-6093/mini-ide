@@ -1,5 +1,4 @@
 import React from 'react'
-import { FileCode } from 'lucide-react'
 import { useIDEStore } from '../store/ideStore'
 
 export const Terminal: React.FC = () => {
@@ -14,10 +13,8 @@ export const Terminal: React.FC = () => {
       <div className="flex-1 p-3 font-mono text-xs text-[#cccccc] overflow-auto">
         {activeFile ? (
           <>
-            <div className="text-[#4ec9b0] mb-2">Running {activeFile.name}...</div>
-            <div className="text-[#969696]">
-              Click the Run button in the header to execute your code.
-            </div>
+            <div className="text-[#4ec9b0] mb-2">Ready to execute {activeFile.name}</div>
+            <div className="text-[#969696]">Click Run to execute your code</div>
           </>
         ) : (
           <div className="text-[#969696]">No file selected</div>
