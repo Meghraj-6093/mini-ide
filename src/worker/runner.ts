@@ -21,7 +21,6 @@ self.addEventListener('message', (event) => {
   }
 
   try {
-    // eslint-disable-next-line no-new-func
     const run = new Function(code)
     const result = run()
 
