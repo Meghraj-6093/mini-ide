@@ -1,18 +1,42 @@
-import React from 'react'
-import { AlertCircle } from 'lucide-react'
+import { cn } from '@/lib/utils';
 
-export const ProblemsPanel: React.FC = () => {
+export default function ProblemsPanel() {
+  const problems = [
+    { id: '1', type: 'error', message: "Expected ';' at end of line", file: 'main.ts:5' },
+    { id: '2', type: 'warning', message: 'Unused variable', file: 'utils.ts:3' },
+  ];
+
   return (
-    <div className="flex flex-col h-full bg-[#181818]">
-      <div className="flex h-8 items-center px-3 border-b border-[#2d2d2d]">
-        <span className="text-xs font-bold text-[#cccccc]">PROBLEMS</span>
+    <div className="h-full flex flex-col">
+      <div className="p-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+        <span className="text-sm font-medium">Problems</span>
       </div>
-      <div className="flex-1 p-3 font-mono text-xs text-[#cccccc]">
-        <div className="text-[#4ec9b0]">No problems detected</div>
-        <div className="text-[#6e6e6e] mt-2 text-xs">
-          Code quality checks will appear here when available.
-        </div>
+      <div className="flex-1 overflow-auto">
+        {problems.map((problem) => (
+          <div
+            key={problem.id}
+            className={cn(
+              'p-2 border-b border-gray-200 dark:border-gray-700 text-sm',
+              problem.type === 'error'
+                ? 'bg-red-50 dark:bg-red-900/20'
+                : 'bg-yellow-50 dark:bg-yellow-900/20'
+            )}
+          >
+            <div className="flex items-center gap-2">
+              <span
+                className={cn(
+                  'text-xs',
+                  problem.type === 'error' ? 'text-red-500' : 'text-yellow-500'
+                )}
+              >
+                ⚠️
+              </span>
+              <span>{problem.message}</span>
+            </div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">{problem.file}</div>
+          </div>
+        ))}
       </div>
     </div>
-  )
+  );
 }
