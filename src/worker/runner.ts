@@ -1,45 +1,79 @@
-// Web Worker for safe code execution
-self.addEventListener('message', (event) => {
+// Web Worker for code execution
+// Runs JavaScript in a sandboxed context
+
+interface MessageData {
+  id: number
+  code: string
+}
+
+interface ResponseData {
+  id: number
+  success: boolean
+  logs: string[]
+  result?: string
+  error?: string
+}
+
+const originalLog = self.console.log
+const originalWarn = self.console.warn
+const originalError = self.console.error
+
+function captureLog(prefix: string, args: any[]): string {
+  return `${prefix} ${args.map((a) => String(a)).join(' ')}`
+}
+
+self.addEventListener('message', (event: MessageEvent<MessageData>) => {
   const { code, id } = event.data
-
   const logs: string[] = []
-  const originalLog = console.log
-  const originalWarn = console.warn
-  const originalError = console.error
-
-  console.log = (...args: any[]) => {
-    logs.push(`✓ ${args.map((a) => String(a)).join(' ')}`)
-    originalLog(...args)
-  }
-  console.warn = (...args: any[]) => {
-    logs.push(`⚠️ ${args.map((a) => String(a)).join(' ')}`)
-    originalWarn(...args)
-  }
-  console.error = (...args: any[]) => {
-    logs.push(`❌ ${args.map((a) => String(a)).join(' ')}`)
-    originalError(...args)
-  }
 
   try {
+    // Capture console output
+    self.console.log = (...args: any[]) => {
+      logs.push(captureLog('→', args))
+      originalLog(...args)
+    }
+    self.console.warn = (...args: any[]) => {
+      logs.push(captureLog('⚠️', args))
+      originalWarn(...args)
+    }
+    self.console.error = (...args: any[]) => {
+      logs.push(captureLog('❌', args))
+      originalError(...args)
+    }
+
+    // Execute code in function scope
     const run = new Function(code)
     const result = run()
 
-    console.log = originalLog
-    console.warn = originalWarn
-    console.error = originalError
+    // Restore original console
+    self.console.log = originalLog
+    self.console.warn = originalWarn
+    self.console.error = originalError
 
-    self.postMessage({
+    const response: ResponseData = {
       id,
       success: true,
       logs,
-      result: result !== undefined ? String(result) : undefined,
-    })
+    }
+
+    if (result !== undefined) {
+      response.result = String(result)
+    }
+
+    self.postMessage(response)
   } catch (error: any) {
-    self.postMessage({
+    // Restore original console
+    self.console.log = originalLog
+    self.console.warn = originalWarn
+    self.console.error = originalError
+
+    const response: ResponseData = {
       id,
       success: false,
-      error: error.message,
       logs,
-    })
+      error: error.message,
+    }
+
+    self.postMessage(response)
   }
 })
