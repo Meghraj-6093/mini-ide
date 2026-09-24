@@ -1,4 +1,3 @@
-import React, { useState } from 'react'
 import {
   Folder,
   FolderOpen,
@@ -194,7 +193,6 @@ export const FileTree: React.FC = () => {
 
   return (
     <div className="flex h-full flex-col bg-[#252526] text-[#cccccc] select-none">
-      {/* Explorer Header Actions */}
       <div className="flex h-9 items-center justify-between border-b border-[#2d2d2d] px-4">
         <span className="text-xs font-bold tracking-wider uppercase text-neutral-400">
           EXPLORER
@@ -217,7 +215,6 @@ export const FileTree: React.FC = () => {
         </div>
       </div>
 
-      {/* Root files and tree */}
       <div className="flex-1 overflow-auto p-1">
         {renderNodes(null)}
       </div>
