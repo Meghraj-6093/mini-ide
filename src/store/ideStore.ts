@@ -17,8 +17,7 @@ export interface IDEState {
   bottomPanelOpen: boolean
   activeSideTab: 'files' | 'search' | 'settings'
   activeBottomTab: 'output' | 'terminal' | 'problems'
-  
-  // Actions
+
   createFile: (parentId: string | null, name: string) => string
   createFolder: (parentId: string | null, name: string) => string
   deleteNode: (id: string) => void
@@ -45,35 +44,14 @@ const initialFiles: Record<string, FileNode> = {
     name: 'index.ts',
     isFolder: false,
     parentId: 'root-src',
-    content: `// Mini IDE TypeScript Playground
-function calculateSum(a: number, b: number): number {
-  return a + b;
-}
-
-const result = calculateSum(10, 25);
-console.log("Sum result:", result);
-`,
+    content: `// Mini IDE TypeScript Playground\nfunction calculateSum(a: number, b: number): number {\n  return a + b;\n}\n\nconst result = calculateSum(10, 25);\nconsole.log("Sum result:", result);\n`,
   },
   'file-app': {
     id: 'file-app',
     name: 'App.tsx',
     isFolder: false,
     parentId: 'root-src',
-    content: `import React from 'react';
-
-export default function App() {
-  return <div>Hello from Mini IDE!</div>;
-}
-`,
-  },
-  'file-readme': {
-    id: 'file-readme',
-    name: 'README.md',
-    isFolder: false,
-    parentId: null,
-    content: `# Mini IDE & Code Runner
-A lightweight browser-based IDE with Monaco Editor and local code execution capabilities.
-`,
+    content: `import React from 'react';\n\nexport default function App() {\n  return <div>Hello from Mini IDE!</div>;\n}\n`,
   },
 }
 
@@ -84,20 +62,14 @@ export const useIDEStore = create<IDEState>((set) => ({
   sidebarOpen: true,
   bottomPanelOpen: true,
   activeSideTab: 'files',
-  activeBottomTab: 'output',
+  activeBottomTab: 'terminal',
 
   createFile: (parentId, name) => {
     const id = `file-${Date.now()}`
     set((state) => ({
       files: {
         ...state.files,
-        [id]: {
-          id,
-          name,
-          isFolder: false,
-          parentId,
-          content: '',
-        },
+        [id]: { id, name, isFolder: false, parentId, content: '' },
       },
       openTabs: [...state.openTabs, id],
       activeFileId: id,
@@ -108,16 +80,7 @@ export const useIDEStore = create<IDEState>((set) => ({
   createFolder: (parentId, name) => {
     const id = `folder-${Date.now()}`
     set((state) => ({
-      files: {
-        ...state.files,
-        [id]: {
-          id,
-          name,
-          isFolder: true,
-          parentId,
-          isOpen: true,
-        },
-      },
+      files: { ...state.files, [id]: { id, name, isFolder: true, parentId, isOpen: true } },
     }))
     return id
   },
@@ -127,24 +90,16 @@ export const useIDEStore = create<IDEState>((set) => ({
       const nextFiles = { ...state.files }
       const deleteRecursive = (nodeId: string) => {
         Object.values(nextFiles).forEach((child) => {
-          if (child.parentId === nodeId) {
-            deleteRecursive(child.id)
-          }
+          if (child.parentId === nodeId) deleteRecursive(child.id)
         })
         delete nextFiles[nodeId]
       }
       deleteRecursive(id)
       const nextOpenTabs = state.openTabs.filter((tabId) => tabId !== id)
-      const nextActiveId =
-        state.activeFileId === id
-          ? nextOpenTabs[nextOpenTabs.length - 1] || null
-          : state.activeFileId
-
-      return {
-        files: nextFiles,
-        openTabs: nextOpenTabs,
-        activeFileId: nextActiveId,
-      }
+      const nextActiveId = state.activeFileId === id
+        ? nextOpenTabs[nextOpenTabs.length - 1] || null
+        : state.activeFileId
+      return { files: nextFiles, openTabs: nextOpenTabs, activeFileId: nextActiveId }
     })
   },
 
@@ -152,15 +107,7 @@ export const useIDEStore = create<IDEState>((set) => ({
     set((state) => {
       const folder = state.files[id]
       if (!folder || !folder.isFolder) return state
-      return {
-        files: {
-          ...state.files,
-          [id]: {
-            ...folder,
-            isOpen: !folder.isOpen,
-          },
-        },
-      }
+      return { files: { ...state.files, [id]: { ...folder, isOpen: !folder.isOpen } } }
     })
   },
 
@@ -174,14 +121,10 @@ export const useIDEStore = create<IDEState>((set) => ({
   closeTab: (id) => {
     set((state) => {
       const nextTabs = state.openTabs.filter((tabId) => tabId !== id)
-      const nextActive =
-        state.activeFileId === id
-          ? nextTabs[nextTabs.length - 1] || null
-          : state.activeFileId
-      return {
-        openTabs: nextTabs,
-        activeFileId: nextActive,
-      }
+      const nextActive = state.activeFileId === id
+        ? nextTabs[nextTabs.length - 1] || null
+        : state.activeFileId
+      return { openTabs: nextTabs, activeFileId: nextActive }
     })
   },
 
@@ -189,28 +132,12 @@ export const useIDEStore = create<IDEState>((set) => ({
     set((state) => {
       const target = state.files[id]
       if (!target || target.isFolder) return state
-      return {
-        files: {
-          ...state.files,
-          [id]: {
-            ...target,
-            content,
-          },
-        },
-      }
+      return { files: { ...state.files, [id]: { ...target, content } } }
     })
   },
 
   toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
   toggleBottomPanel: () => set((state) => ({ bottomPanelOpen: !state.bottomPanelOpen })),
-  setActiveSideTab: (tab) =>
-    set((state) => ({
-      activeSideTab: tab,
-      sidebarOpen: state.activeSideTab === tab ? !state.sidebarOpen : true,
-    })),
-  setActiveBottomTab: (tab) =>
-    set((state) => ({
-      activeBottomTab: tab,
-      bottomPanelOpen: state.activeBottomTab === tab ? !state.bottomPanelOpen : true,
-    })),
+  setActiveSideTab: (tab) => set((state) => ({ activeSideTab: tab })),
+  setActiveBottomTab: (tab) => set((state) => ({ activeBottomTab: tab })),
 }))
