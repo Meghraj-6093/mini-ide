@@ -1,16 +1,10 @@
 import { cn } from '@/lib/utils';
-import { useIDEStore } from '@/store/ideStore';
 
 export default function Header() {
-  const { setCommandPaletteOpen } = useIDEStore();
-
   return (
     <header className="h-10 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-3 bg-gray-50 dark:bg-gray-800">
       <div className="flex items-center gap-2">
-        <button
-          className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
-          onClick={() => setCommandPaletteOpen(true)}
-        >
+        <button className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700">
           <span className="text-xs">🔍</span>
         </button>
         <span className="text-sm font-semibold">Mini IDE</span>
