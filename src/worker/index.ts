@@ -1,26 +1,24 @@
-// Web Worker for safe code execution in a separate thread
-let worker: Worker | null = null
-let messageId = 0
+import { createWorker } from 'react-web-worker';
+import { workerCode } from './runner';
 
-export function runCode(code: string): Promise<{ logs: string[]; result?: string; error?: string }> {
-  if (!worker) {
-    worker = new Worker(new URL('./runner.ts', import.meta.url))
+const Worker = createWorker(workerCode);
+
+export const runCode = (code: string, language: string = 'javascript') => {
+  return new Promise((resolve, reject) => {
+    const worker = new Worker();
+
     worker.onmessage = (e) => {
-      console.log('Worker response:', e.data)
-    }
-  }
-
-  return new Promise((resolve) => {
-    const id = messageId++
-
-    const handler = (e: MessageEvent) => {
-      if (e.data.id === id) {
-        worker!.removeEventListener('message', handler)
-        resolve(e.data)
+      if (e.data.type === 'error') {
+        reject(e.data.content);
+      } else {
+        resolve(e.data);
       }
-    }
+    };
 
-    worker!.addEventListener('message', handler)
-    worker!.postMessage({ id, code })
-  })
-}
+    worker.onerror = (error) => {
+      reject(error.message);
+    };
+
+    worker.postMessage({ code, language });
+  });
+};
