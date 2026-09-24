@@ -15,7 +15,7 @@ export interface IDEState {
   openTabs: string[]
   sidebarOpen: boolean
   bottomPanelOpen: boolean
-  activeSideTab: 'files' | 'search' | 'settings'
+  activeSideTab: 'files' | 'search' | 'settings' | 'templates'
   activeBottomTab: 'output' | 'terminal' | 'problems'
 
   createFile: (parentId: string | null, name: string) => string
@@ -27,38 +27,20 @@ export interface IDEState {
   updateFileContent: (id: string, content: string) => void
   toggleSidebar: () => void
   toggleBottomPanel: () => void
-  setActiveSideTab: (tab: 'files' | 'search' | 'settings') => void
-  setActiveBottomTab: (tab: 'output' | 'terminal' | 'problems') => void
+  setActiveSideTab: (tab: string) => void
+  setActiveBottomTab: (tab: string) => void
 }
 
 const initialFiles: Record<string, FileNode> = {
-  'root-src': {
-    id: 'root-src',
-    name: 'src',
-    isFolder: true,
-    parentId: null,
-    isOpen: true,
-  },
-  'file-index': {
-    id: 'file-index',
-    name: 'index.ts',
-    isFolder: false,
-    parentId: 'root-src',
-    content: `// Mini IDE TypeScript Playground\nfunction calculateSum(a: number, b: number): number {\n  return a + b;\n}\n\nconst result = calculateSum(10, 25);\nconsole.log("Sum result:", result);\n`,
-  },
-  'file-app': {
-    id: 'file-app',
-    name: 'App.tsx',
-    isFolder: false,
-    parentId: 'root-src',
-    content: `import React from 'react';\n\nexport default function App() {\n  return <div>Hello from Mini IDE!</div>;\n}\n`,
-  },
+  'root-src': { id: 'root-src', name: 'src', isFolder: true, parentId: null, isOpen: true },
+  'file-index': { id: 'file-index', name: 'index.ts', isFolder: false, parentId: 'root-src', content: 'console.log("Hello from Mini IDE!");\n' },
+  'file-readme': { id: 'file-readme', name: 'README.md', isFolder: false, parentId: null, content: '# Mini IDE\n\nYour browser-based coding environment.\n' },
 }
 
 export const useIDEStore = create<IDEState>((set) => ({
   files: initialFiles,
   activeFileId: 'file-index',
-  openTabs: ['file-index', 'file-app'],
+  openTabs: ['file-index', 'file-readme'],
   sidebarOpen: true,
   bottomPanelOpen: true,
   activeSideTab: 'files',
@@ -67,10 +49,7 @@ export const useIDEStore = create<IDEState>((set) => ({
   createFile: (parentId, name) => {
     const id = `file-${Date.now()}`
     set((state) => ({
-      files: {
-        ...state.files,
-        [id]: { id, name, isFolder: false, parentId, content: '' },
-      },
+      files: { ...state.files, [id]: { id, name, isFolder: false, parentId, content: '' } },
       openTabs: [...state.openTabs, id],
       activeFileId: id,
     }))
@@ -79,9 +58,7 @@ export const useIDEStore = create<IDEState>((set) => ({
 
   createFolder: (parentId, name) => {
     const id = `folder-${Date.now()}`
-    set((state) => ({
-      files: { ...state.files, [id]: { id, name, isFolder: true, parentId, isOpen: true } },
-    }))
+    set((state) => ({ files: { ...state.files, [id]: { id, name, isFolder: true, parentId, isOpen: true } } }))
     return id
   },
 
@@ -138,6 +115,6 @@ export const useIDEStore = create<IDEState>((set) => ({
 
   toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
   toggleBottomPanel: () => set((state) => ({ bottomPanelOpen: !state.bottomPanelOpen })),
-  setActiveSideTab: (tab) => set((state) => ({ activeSideTab: tab })),
-  setActiveBottomTab: (tab) => set((state) => ({ activeBottomTab: tab })),
+  setActiveSideTab: (tab) => set((state) => ({ activeSideTab: tab as any })),
+  setActiveBottomTab: (tab) => set((state) => ({ activeBottomTab: tab as any })),
 }))
