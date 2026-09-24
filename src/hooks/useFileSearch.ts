@@ -1,18 +1,17 @@
-import { useMemo } from 'react'
-import { useIDEStore } from '../store/ideStore'
+export const useFileSearch = (projectId: string | null, query: string) => {
+  const { projects, searchFiles } = useIDEStore();
+  const [results, setResults] = useState<FileNode[]>([]);
 
-export const useFileSearch = (query: string) => {
-  const { files } = useIDEStore()
+  useEffect(() => {
+    if (!projectId || !query) {
+      setResults([]);
+      return;
+    }
+    const timer = setTimeout(() => {
+      searchFiles(projectId);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [projectId, query]);
 
-  const results = useMemo(() => {
-    if (!query.trim()) return []
-
-    return Object.values(files)
-      .filter((file) => !file.isFolder)
-      .filter((file) =>
-        file.name.toLowerCase().includes(query.toLowerCase())
-      )
-  }, [files, query])
-
-  return results
-}
+  return results;
+};
