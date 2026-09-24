@@ -1,7 +1,4 @@
-dist
 node_modules
-.DS_Store
+dist
+dist-ssr
 *.local
-.vscode/
-!vscode/.gitignore
-.env
