@@ -1,25 +1,17 @@
-import React from 'react'
-import { useIDEStore } from '../store/ideStore'
+import { cn } from '@/lib/utils';
 
-export const Terminal: React.FC = () => {
-  const { files, activeFileId } = useIDEStore()
-  const activeFile = activeFileId ? files[activeFileId] : null
-
+export default function Terminal() {
   return (
-    <div className="flex flex-col h-full bg-[#181818]">
-      <div className="flex h-8 items-center px-3 border-b border-[#2d2d2d]">
-        <span className="text-xs font-bold text-[#cccccc]">TERMINAL</span>
+    <div className="h-full flex flex-col">
+      <div className="p-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+        <span className="text-sm font-medium">Terminal</span>
       </div>
-      <div className="flex-1 p-3 font-mono text-xs text-[#cccccc] overflow-auto">
-        {activeFile ? (
-          <>
-            <div className="text-[#4ec9b0] mb-2">Ready to execute {activeFile.name}</div>
-            <div className="text-[#969696]">Click Run to execute your code</div>
-          </>
-        ) : (
-          <div className="text-[#969696]">No file selected</div>
-        )}
+      <div className="flex-1 p-2 font-mono text-sm overflow-auto">
+        <div className="text-green-500">
+          <span className="text-gray-500 dark:text-gray-400">$</span> node main.ts
+        </div>
+        <div>Hello, World!</div>
       </div>
     </div>
-  )
+  );
 }
