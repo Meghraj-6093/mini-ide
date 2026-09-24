@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-/* Custom IDE styles */
 :root {
   --bg-primary: #1e1e1e;
   --bg-secondary: #252526;
@@ -26,4 +25,8 @@ body {
 
 * {
   box-sizing: border-box;
+}
+
+textarea {
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
 }
