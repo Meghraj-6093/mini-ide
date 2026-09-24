@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
-import Tree from './Tree';
 import { useIDEStore } from '@/store/ideStore';
+import Tree from './Tree';
 
 export default function Sidebar() {
   const { sidebarOpen, toggleSidebar } = useIDEStore();
@@ -8,7 +8,7 @@ export default function Sidebar() {
   return (
     <div
       className={cn(
-        'border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800',
+        'border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 transition-all duration-200',
         sidebarOpen ? 'w-64' : 'w-0 overflow-hidden'
       )}
     >
@@ -24,6 +24,9 @@ export default function Sidebar() {
         </div>
         <div className="flex-1 overflow-auto">
           <Tree />
+        </div>
+        <div className="p-2 border-t border-gray-200 dark:border-gray-700">
+          <Templates />
         </div>
       </div>
     </div>
